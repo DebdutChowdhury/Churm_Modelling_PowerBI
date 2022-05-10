@@ -178,7 +178,7 @@ begin
 end
 
 
-exec sp_CustomerByLocation 'France',1
+exec sp_CustomerByLocation 'Spain',1
 exec sp_CustomerByLocation 'France',0
 
 alter procedure AgeByScore
@@ -191,17 +191,17 @@ as
 begin 
 if(@age = 18 and @age < 40)
 	begin
-		select Surname, Age,CreditScore, EstimatedSalary as Age_Salary
+		select Surname, Age,CreditScore, EstimatedSalary as Salary
 		from Churn_Modelling where Geography=@location and IsActiveMember=@active and Age=@age
 	end
 else if (@age > 40 and @age < 90 )
 	begin
-		select Surname, Age,CreditScore, EstimatedSalary as Age_Salary
+		select Surname, Age,CreditScore, EstimatedSalary as Salary
 		from Churn_Modelling where Geography=@location and IsActiveMember=@active and Age=@age
 	end
 else
 	begin
-		select Surname, Age,CreditScore, EstimatedSalary as Age_Salary 
+		select Surname, Age,CreditScore, EstimatedSalary as Salary 
 		from Churn_Modelling where Geography=@location and IsActiveMember=@active
 	end
 end
@@ -294,3 +294,21 @@ BEGIN
         on e.salary is not null
     );
 END
+
+
+
+select * from Churn_Modelling
+
+select s.Surname as Balanced_Surname, c.Surname as Null_balance_Surname
+from Churn_Modelling c, Churn_Modelling s
+--where cast(c.Balance as decimal ) > cast(s.Balance as decimal )
+where cast(c.Balance as decimal )=0 and cast(s.Balance as decimal )!= 0
+
+
+
+select * from Churn_Modelling where Surname in (select Surname from Churn_Modelling 
+where cast(Balance as decimal )=0)
+
+
+
+select Surname + '--' + Balance from Churn_Modelling
